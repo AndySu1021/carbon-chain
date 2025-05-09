@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package carbonchain.voting;
+
+option go_package = "carbonchain/x/voting/types";
+
+message Proposal {
+  uint64 id = 1;
+  string title = 2;
+  string description = 3;
+  string creator = 4;
+  uint64 yes_count = 5;
+  uint64 no_count = 6;
+}

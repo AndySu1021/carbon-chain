@@ -54,8 +54,11 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 
 	carbonchainmodulev1 "carbonchain/api/carbonchain/carbonchain/module"
+	votingmodulev1 "carbonchain/api/carbonchain/voting/module"
 	_ "carbonchain/x/carbonchain/module" // import for side-effects
 	carbonchainmoduletypes "carbonchain/x/carbonchain/types"
+	_ "carbonchain/x/voting/module" // import for side-effects
+	votingmoduletypes "carbonchain/x/voting/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
@@ -94,6 +97,7 @@ var (
 		circuittypes.ModuleName,
 		// chain modules
 		carbonchainmoduletypes.ModuleName,
+		votingmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 
@@ -119,6 +123,7 @@ var (
 		ibcfeetypes.ModuleName,
 		// chain modules
 		carbonchainmoduletypes.ModuleName,
+		votingmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	}
 
@@ -138,6 +143,7 @@ var (
 		ibcfeetypes.ModuleName,
 		// chain modules
 		carbonchainmoduletypes.ModuleName,
+		votingmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	}
 
@@ -296,6 +302,10 @@ var (
 			{
 				Name:   carbonchainmoduletypes.ModuleName,
 				Config: appconfig.WrapAny(&carbonchainmodulev1.Module{}),
+			},
+			{
+				Name:   votingmoduletypes.ModuleName,
+				Config: appconfig.WrapAny(&votingmodulev1.Module{}),
 			},
 			// this line is used by starport scaffolding # stargate/app/moduleConfig
 		},

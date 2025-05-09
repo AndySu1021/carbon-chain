@@ -1,0 +1,25 @@
+package types
+
+import (
+	errorsmod "cosmossdk.io/errors"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+)
+
+var _ sdk.Msg = &MsgVote{}
+
+func NewMsgVote(creator string, proposalId uint64, vote string) *MsgVote {
+	return &MsgVote{
+		Creator:    creator,
+		ProposalId: proposalId,
+		Vote:       vote,
+	}
+}
+
+func (msg *MsgVote) ValidateBasic() error {
+	_, err := sdk.AccAddressFromBech32(msg.Creator)
+	if err != nil {
+		return errorsmod.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
+	}
+	return nil
+}

@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             (unknown)
-// source: carbonchain/carbonchain/query.proto
+// source: carbonchain/voting/query.proto
 
-package carbonchain
+package voting
 
 import (
 	context "context"
@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Query_Params_FullMethodName = "/carbonchain.carbonchain.Query/Params"
+	Query_Params_FullMethodName   = "/carbonchain.voting.Query/Params"
+	Query_Proposal_FullMethodName = "/carbonchain.voting.Query/Proposal"
 )
 
 // QueryClient is the client API for Query service.
@@ -28,6 +29,8 @@ const (
 type QueryClient interface {
 	// Parameters queries the parameters of the module.
 	Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error)
+	// Queries a list of Proposal items.
+	Proposal(ctx context.Context, in *QueryProposalRequest, opts ...grpc.CallOption) (*QueryProposalResponse, error)
 }
 
 type queryClient struct {
@@ -47,12 +50,23 @@ func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts .
 	return out, nil
 }
 
+func (c *queryClient) Proposal(ctx context.Context, in *QueryProposalRequest, opts ...grpc.CallOption) (*QueryProposalResponse, error) {
+	out := new(QueryProposalResponse)
+	err := c.cc.Invoke(ctx, Query_Proposal_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility
 type QueryServer interface {
 	// Parameters queries the parameters of the module.
 	Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error)
+	// Queries a list of Proposal items.
+	Proposal(context.Context, *QueryProposalRequest) (*QueryProposalResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -62,6 +76,9 @@ type UnimplementedQueryServer struct {
 
 func (UnimplementedQueryServer) Params(context.Context, *QueryParamsRequest) (*QueryParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Params not implemented")
+}
+func (UnimplementedQueryServer) Proposal(context.Context, *QueryProposalRequest) (*QueryProposalResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Proposal not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 
@@ -94,18 +111,40 @@ func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_Proposal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryProposalRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Proposal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_Proposal_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Proposal(ctx, req.(*QueryProposalRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Query_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "carbonchain.carbonchain.Query",
+	ServiceName: "carbonchain.voting.Query",
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Params",
 			Handler:    _Query_Params_Handler,
 		},
+		{
+			MethodName: "Proposal",
+			Handler:    _Query_Proposal_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "carbonchain/carbonchain/query.proto",
+	Metadata: "carbonchain/voting/query.proto",
 }

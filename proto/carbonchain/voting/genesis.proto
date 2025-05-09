@@ -1,0 +1,17 @@
+syntax = "proto3";
+package carbonchain.voting;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "carbonchain/voting/params.proto";
+
+option go_package = "carbonchain/x/voting/types";
+
+// GenesisState defines the voting module's genesis state.
+message GenesisState {
+  // params defines all the parameters of the module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}

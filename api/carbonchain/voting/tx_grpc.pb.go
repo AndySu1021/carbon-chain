@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             (unknown)
-// source: carbonchain/carbonchain/tx.proto
+// source: carbonchain/voting/tx.proto
 
-package carbonchain
+package voting
 
 import (
 	context "context"
@@ -19,7 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	Msg_UpdateParams_FullMethodName = "/carbonchain.carbonchain.Msg/UpdateParams"
+	Msg_UpdateParams_FullMethodName   = "/carbonchain.voting.Msg/UpdateParams"
+	Msg_CreateProposal_FullMethodName = "/carbonchain.voting.Msg/CreateProposal"
+	Msg_Vote_FullMethodName           = "/carbonchain.voting.Msg/Vote"
 )
 
 // MsgClient is the client API for Msg service.
@@ -29,6 +31,8 @@ type MsgClient interface {
 	// UpdateParams defines a (governance) operation for updating the module
 	// parameters. The authority defaults to the x/gov module account.
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
+	CreateProposal(ctx context.Context, in *MsgCreateProposal, opts ...grpc.CallOption) (*MsgCreateProposalResponse, error)
+	Vote(ctx context.Context, in *MsgVote, opts ...grpc.CallOption) (*MsgVoteResponse, error)
 }
 
 type msgClient struct {
@@ -48,6 +52,24 @@ func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParams, opts 
 	return out, nil
 }
 
+func (c *msgClient) CreateProposal(ctx context.Context, in *MsgCreateProposal, opts ...grpc.CallOption) (*MsgCreateProposalResponse, error) {
+	out := new(MsgCreateProposalResponse)
+	err := c.cc.Invoke(ctx, Msg_CreateProposal_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) Vote(ctx context.Context, in *MsgVote, opts ...grpc.CallOption) (*MsgVoteResponse, error) {
+	out := new(MsgVoteResponse)
+	err := c.cc.Invoke(ctx, Msg_Vote_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MsgServer is the server API for Msg service.
 // All implementations must embed UnimplementedMsgServer
 // for forward compatibility
@@ -55,6 +77,8 @@ type MsgServer interface {
 	// UpdateParams defines a (governance) operation for updating the module
 	// parameters. The authority defaults to the x/gov module account.
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
+	CreateProposal(context.Context, *MsgCreateProposal) (*MsgCreateProposalResponse, error)
+	Vote(context.Context, *MsgVote) (*MsgVoteResponse, error)
 	mustEmbedUnimplementedMsgServer()
 }
 
@@ -64,6 +88,12 @@ type UnimplementedMsgServer struct {
 
 func (UnimplementedMsgServer) UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateParams not implemented")
+}
+func (UnimplementedMsgServer) CreateProposal(context.Context, *MsgCreateProposal) (*MsgCreateProposalResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateProposal not implemented")
+}
+func (UnimplementedMsgServer) Vote(context.Context, *MsgVote) (*MsgVoteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Vote not implemented")
 }
 func (UnimplementedMsgServer) mustEmbedUnimplementedMsgServer() {}
 
@@ -96,18 +126,62 @@ func _Msg_UpdateParams_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_CreateProposal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCreateProposal)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CreateProposal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_CreateProposal_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CreateProposal(ctx, req.(*MsgCreateProposal))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_Vote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgVote)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).Vote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_Vote_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).Vote(ctx, req.(*MsgVote))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Msg_ServiceDesc is the grpc.ServiceDesc for Msg service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Msg_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "carbonchain.carbonchain.Msg",
+	ServiceName: "carbonchain.voting.Msg",
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "UpdateParams",
 			Handler:    _Msg_UpdateParams_Handler,
 		},
+		{
+			MethodName: "CreateProposal",
+			Handler:    _Msg_CreateProposal_Handler,
+		},
+		{
+			MethodName: "Vote",
+			Handler:    _Msg_Vote_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "carbonchain/carbonchain/tx.proto",
+	Metadata: "carbonchain/voting/tx.proto",
 }
